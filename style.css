@@ -1,0 +1,1482 @@
+:root {
+    --primary-orange: #F05A28;
+    --gradient-bg: linear-gradient(135deg, #FF8C00 0%, #E65C00 100%);
+    --dark-gray: #333333;
+    --light-gray: #F5F5F5;
+    --border-color: #E0E0E0;
+    --text-main: #231F20;
+    --white: #FFFFFF;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Prompt', sans-serif;
+}
+
+body {
+    background: var(--gradient-bg);
+    height: 100vh; /* เปลี่ยนจาก min-height เป็น height แบบตายตัว */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* บังคับซ่อน Scrollbar ของทั้งหน้าเว็บ */
+}
+
+/* --- Navbar --- */
+header {
+    background: rgba(35, 31, 32, 0.95);
+    padding: 15px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--white);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo-white {
+    color: white;
+    font-weight: 800;
+}
+
+.logo-tag {
+    font-size: 20px;
+    background: var(--primary-orange);
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.profile-btn {
+    background: transparent;
+    border: 1px solid var(--white);
+    color: var(--white);
+    padding: 8px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.profile-btn:hover {
+    background: var(--white);
+    color: var(--dark-gray);
+}
+
+/* --- Main Layout --- */
+.container {
+    display: flex;
+    flex: 1;
+    padding: 20px 30px;
+    gap: 20px;
+    max-width: 1900px;
+    margin: 0 auto;
+    width: 100%;
+    overflow: hidden;
+}
+
+/* --- Sidebar --- */
+.sidebar {
+    width: 320px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.menu-section {
+    background: var(--white);
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.menu-item {
+    padding: 15px 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text-main);
+    font-weight: 600;
+    transition: background 0.3s ease;
+}
+
+.menu-item.active {
+    background: #c5c5c5;
+}
+
+.menu-item:hover:not(.active) {
+    background: var(--light-gray);
+}
+
+.ai-chat-section {
+    background: var(--white);
+    border-radius: 10px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    padding: 15px;
+}
+
+.ai-header {
+    font-weight: 600;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.chat-history {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+.chat-history::-webkit-scrollbar { width: 5px; }
+.chat-history::-webkit-scrollbar-thumb { background: #ccc; border-radius: 5px; }
+
+.ai-msg-content p { margin-bottom: 10px; line-height: 1.5; }
+.ai-msg-content p:last-child { margin-bottom: 0; }
+.ai-msg-content ul, .ai-msg-content ol { margin-left: 20px; margin-bottom: 10px; }
+.ai-msg-content li { margin-bottom: 5px; }
+.ai-msg-content strong { color: #d04a1c; }
+
+.chat-hint {
+    color: #888;
+    font-size: 13px;
+    margin-bottom: 10px;
+}
+
+.chat-input-box {
+    background: var(--light-gray);
+    border-radius: 10px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.chat-input-box input {
+    border: none;
+    background: transparent;
+    outline: none;
+    width: 100%;
+    font-size: 14px;
+}
+
+.chat-tools {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.tools-left {
+    display: flex;
+    gap: 15px;
+    color: #666;
+}
+
+.tools-left i {
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.tools-left i:hover {
+    color: var(--primary-orange);
+}
+
+.send-btn {
+    background: #ffffff;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.send-btn:hover {
+    background: var(--primary-orange);
+    color: white;
+}
+
+/* --- Main Content Area --- */
+.main-content {
+    flex: 1;
+    background: var(--white);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow-y: hidden; /* เพิ่มบรรทัดนี้! จะทำให้เลื่อนได้เฉพาะในกล่องนี้ */
+}
+.main-content::-webkit-scrollbar {
+    width: 6px;
+}
+.main-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+.main-content::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 10px;
+}
+.main-content::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
+}
+.page-view {
+    display: none;
+    height: 100%;
+    animation: fadeIn 0.4s ease-in-out;
+    padding: 40px;
+    overflow-y: auto;
+}
+.page-view::-webkit-scrollbar { width: 6px; }
+.page-view::-webkit-scrollbar-track { background: transparent; }
+.page-view::-webkit-scrollbar-thumb { background: #d1d5db; }
+.page-view::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+/* 1. ซ่อนแถบเลื่อนสำหรับเบราว์เซอร์ตระกูล WebKit (Chrome, Safari, Edge ใหม่) */
+.page-view::-webkit-scrollbar {
+    display: none;
+}
+
+.page-view {
+    -ms-overflow-style: none;  /* สำหรับ Internet Explorer และ Edge */
+    scrollbar-width: none;  /* สำหรับ Firefox */
+}
+
+
+.page-view.active {
+    display: flex;
+    flex-direction: column;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.page-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 30px;
+    color: var(--text-main);
+}
+
+/* --- Personal Info Page --- */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 30px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    font-size: 14px;
+    color: #555;
+}
+
+.form-group input {
+    padding: 12px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    outline: none;
+    transition: border 0.3s ease;
+}
+
+.form-group input:focus {
+    border-color: var(--primary-orange);
+}
+
+.section-sub-title {
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.list-selection-container {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 350px;
+}
+
+.list-header {
+    background: #333;
+    color: white;
+    padding: 12px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 500;
+}
+
+.list-header i {
+    color: var(--primary-orange);
+}
+
+.list-items {
+    overflow-y: auto;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: #FAFAFA;
+    flex: 1;
+}
+
+.list-item-btn {
+    background: #EAEAEA;
+    border: none;
+    padding: 12px 15px;
+    border-radius: 6px;
+    text-align: left;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    color: var(--text-main);
+}
+
+.list-item-btn:hover:not(:disabled) {
+    background: #D0D0D0;
+    transform: translateX(5px);
+}
+
+.list-item-btn.selected {
+    background: var(--primary-orange);
+    color: white;
+    font-weight: 500;
+}
+
+.list-item-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.submit-btn-container {
+    margin-top: auto;
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 30px;
+}
+
+.submit-btn-dark {
+    background: #333;
+    color: white;
+    padding: 12px 40px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+.submit-btn-dark:hover {
+    background: #111;
+    transform: scale(1.02);
+}
+
+/* ==========================================
+   ปรับแต่งส่วน หัวข้อ และ ปุ่มเลือกชั้นปี/เทอม (ฉบับ Flat Design คลีนๆ ใหญ่ขึ้น)
+========================================== */
+.planning-header {
+    text-align: center !important; /* บังคับให้อยู่ตรงกลาง */
+    width: 100%; /* กางเต็มพื้นที่เพื่อหาจุดกึ่งกลาง */
+    font-size: 28px;
+    font-weight: 700;
+    color: #111;
+    margin-bottom: 30px;
+}
+
+.year-tabs {
+    display: flex !important;
+    justify-content: center !important; /* บังคับปุ่มให้อยู่กึ่งกลางแนวนอน */
+    align-items: center;
+    width: 100%; /* บังคับกาง 100% */
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+/* ปุ่มชั้นปี (ตอนที่ยังไม่ได้เลือก) */
+.year-tab {
+    background: #f3f4f6; /* สีเทาอ่อน */
+    color: #4b5563; /* สีเทาเข้ม */
+    border: 1px solid #d1d5db; /* ขอบบางๆ สีเทา */
+    padding: 12px 35px; /* เพิ่ม padding ให้ปุ่มใหญ่ขึ้น */
+    border-radius: 12px; /* มุมมนกำลังดี */
+    font-family: 'Prompt', sans-serif;
+    font-size: 18px; /* ขยายขนาดตัวอักษรให้ใหญ่ขึ้น */
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: none; /* ลบเงาและขอบ 3D ของเดิมทิ้ง */
+}
+
+/* เอฟเฟกต์ตอนเอาเมาส์ชี้ปุ่มชั้นปี */
+.year-tab:hover {
+    background: #e5e7eb;
+    transform: translateY(-2px); 
+}
+
+/* ปุ่มชั้นปี (ตอนที่กำลังเลือกอยู่ / Active) */
+.year-tab.active {
+    background: var(--primary-orange); 
+    color: white;
+    border: 2px solid #333333; /* ขอบสีเข้มตามแบบในรูปของคุณปุณณ์ */
+    box-shadow: 0 6px 15px rgba(240, 90, 40, 0.3); /* เพิ่มเงาให้ดูมีมิติเด้งออกมา */
+}
+
+/* ส่วนตัวเลือก "เทอมที่ 1" */
+.semester-selector {
+    display: flex !important;
+    justify-content: center !important; /* บังคับให้อยู่กึ่งกลาง */
+    align-items: center;
+    width: 100%;
+    gap: 20px;
+    margin-bottom: 30px;
+    font-size: 20px;
+    font-weight: 600;
+    color: #111;
+}
+
+.semester-selector i {
+    cursor: pointer;
+    color: #6b7280;
+    padding: 10px;
+    border-radius: 50%;
+    transition: 0.2s;
+    font-size: 20px;
+}
+
+.semester-selector i:hover {
+    background: #f3f4f6;
+    color: var(--primary-orange);
+}
+
+/* --- Course Planning Page (Timetable) --- */
+.schedule-layout {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+    flex: 1;
+}
+
+.timetable {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 100px repeat(9, 1fr); /* ปรับความกว้างคอลัมน์แรกเป็น 100px (จากของเดิมคือ 80px) */
+    grid-template-rows: 40px repeat(7, 45px);
+    gap: 1px;
+    border: 1px solid white;
+    background-color: #E0E0E0; 
+    position: relative;
+}
+
+.timetable > div {
+    background: #999;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 12px;
+    padding: 5px;
+    text-align: center;
+}
+
+/* 🎨 ธีมตารางเรียน Dark Mode */
+.timetable .time-header-main,
+.timetable .time-header,
+#timetable-grid th,
+#timetable-grid td:first-child {
+    background-color: #111111 !important;
+    color: #ffffff !important;
+    border: 1px solid #333333 !important;
+    font-weight: 600;
+}
+
+.timetable .day-header {
+    background: #111111 !important; /* เปลี่ยนเป็นสีดำให้เข้าธีม */
+    color: #ffffff !important;
+    font-weight: 600;
+}
+
+.timetable .empty-slot {
+    background: #2d2d2d; 
+}
+
+.course-block {
+    background: var(--gradient-bg); 
+    color: white !important;
+    border-radius: 4px;
+    margin: 2px; 
+    padding: 4px;
+    font-size: 11px !important;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    cursor: default;
+    transition: transform 0.2s;
+    font-weight: 500;
+}
+
+.course-block:hover {
+    transform: scale(1.02);
+}
+
+.credits-total {
+    text-align: right;
+    font-weight: 600;
+    font-size: 18px;
+    margin-top: 15px;
+}
+
+/* ==========================================
+   ปรับขนาดตัวอักษรในตารางเรียน
+========================================== */
+
+/* 1. ขยายตัวหนังสือแถบเวลาด้านบน (8.00-9.00) */
+#timetable-header-row {
+    font-size: 14px !important; 
+}
+#timetable-header-row > div {
+    padding: 16px 5px !important; 
+}
+
+/* คลาสสำหรับเวลาตอนที่มีวิชาเรียนถูกสร้างจาก JS */
+.time-header-main, .time-header {
+    font-size: 14px !important;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 2. ขยายตัวหนังสือแถววัน (จันทร์-อาทิตย์) และขยายความกว้าง */
+#timetable-header-row div:first-child,
+[id^="row-"] > div:first-child {
+    width: 100px !important; 
+    font-size: 16px !important; 
+}
+
+/* คลาสสำหรับแถววันตอนที่มีวิชาเรียนถูกสร้างจาก JS */
+.day-header {
+    font-size: 16px !important;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* --- Accordions (ค้นหาวิชา) --- */
+.course-accordions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.accordion-item {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    overflow: hidden;
+}
+
+.accordion-header {
+    padding: 15px;
+    background: #f9fafb;
+    font-weight: 600;
+    color: #374151;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.accordion-header:hover {
+    background: #f3f4f6;
+}
+.accordion-header i {
+    transition: transform 0.3s ease;
+}
+
+.accordion-content {
+    display: none; 
+    padding: 15px;
+    border-top: 1px solid #e5e7eb;
+}
+.course-search-box {
+    width: 100%;
+    padding: 10px 15px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    outline: none;
+    font-family: 'Prompt', sans-serif;
+    transition: border-color 0.2s;
+}
+.course-search-box:focus {
+    border-color: #F05A28;
+}
+
+.course-results-list {
+    max-height: 250px;
+    overflow-y: auto;
+    border-radius: 6px;
+}
+.course-results-list::-webkit-scrollbar { width: 5px; }
+.course-results-list::-webkit-scrollbar-thumb { background: #ccc; border-radius: 5px; }
+
+.course-item-dropdown {
+    padding: 12px;
+    border: 1px solid #f3f4f6;
+    border-bottom: 1px solid #e5e7eb;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.course-item-dropdown:hover {
+    background: #fef2f2;
+    border-left: 3px solid #F05A28;
+}
+
+.course-list-item {
+    padding: 15px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    gap: 15px;
+}
+
+.course-list-item:last-child {
+    border-bottom: none;
+}
+
+.course-checkbox {
+    margin-top: 4px;
+}
+
+.course-info {
+    flex: 1;
+    font-size: 14px;
+}
+
+.course-info strong {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.info-empty {
+    color: #666;
+}
+
+.course-meta {
+    display: flex;
+    gap: 15px;
+    color: #666;
+    font-size: 13px;
+}
+
+.submit-btn-orange {
+    background: var(--gradient-bg);
+    color: white;
+    padding: 12px 40px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    margin-top: 20px;
+    width: 100%;
+}
+
+.submit-btn-orange:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 10px rgba(240,90,40,0.3);
+}
+
+/* =========================================
+   🚀 UI การ์ดรายวิชาแบบใหม่ (สไตล์ภาพที่ 3) 
+   ========================================= */
+.selected-course-card {
+    display: flex;
+    background: #ffffff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    margin-bottom: 12px;
+    border: 1px solid #e5e7eb;
+    position: relative;
+    transition: transform 0.2s;
+}
+.selected-course-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* แถบสีด้านซ้าย (รหัสวิชา) */
+.course-card-left {
+    width: 110px; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    font-weight: 700;
+    color: #1f2937;
+    text-align: center;
+    font-size: 14px;
+}
+
+/* พื้นที่รายละเอียดด้านขวา */
+.course-card-right {
+    flex: 1;
+    padding: 12px 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* แถวชื่อวิชา และ ป้ายหน่วยกิต */
+.course-header-row {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+    flex-wrap: wrap;
+}
+.course-name-title {
+    font-weight: 600;
+    font-size: 15px;
+    color: #111827;
+    text-transform: uppercase;
+}
+.credit-pill {
+    background-color: #6366f1; /* สีม่วงแบบในรูป */
+    color: white;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+/* ข้อความรายละเอียด (ชื่อไทย, กลุ่ม) */
+.course-details-text {
+    font-size: 13px;
+    color: #4b5563;
+    margin-bottom: 4px;
+}
+
+/* วันที่สอบ (สีแดงเด่นๆ) */
+.exam-date-text {
+    font-size: 13px;
+    color: #ef4444;
+    font-weight: 500;
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* ปุ่มลบสไตล์มินิมอล */
+.delete-btn-modern {
+    position: absolute;
+    bottom: 12px;
+    right: 16px;
+    background: #fee2e2;
+    color: #ef4444;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+.delete-btn-modern:hover {
+    background: #ef4444;
+    color: white;
+}
+
+/* ==========================================
+   หน้า Community Chat Layout
+========================================== */
+.community-layout {
+    display: flex;
+    height: 100%;
+    background: #e9e9e9;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.chat-section-header {
+    background: #fff;
+    padding: 15px 20px;
+    font-weight: 600;
+    font-size: 16px;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+}
+
+.chat-sidebar-left {
+    width: 250px;
+    background: #d4d4d4;
+    border-right: 1px solid #ccc;
+    display: flex;
+    flex-direction: column;
+}
+.chat-room-list {
+    padding: 10px;
+    overflow-y: auto;
+}
+.chat-room-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    background: #fff;
+    transition: 0.2s;
+}
+.chat-room-item.active {
+    background: #F05A28;
+    color: white;
+}
+.chat-room-item .room-icon {
+    width: 35px;
+    height: 35px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+    border: 1px solid #333;
+    background: transparent;
+    color: inherit;
+}
+.chat-room-item.active .room-icon {
+    border-color: #fff;
+}
+.room-icon.custom-bg { background: #000; color: #fff; border: none; }
+
+.chat-main-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: #f8f8f8;
+}
+.flex-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: left;
+}
+.anonymous-btn {
+    background: transparent;
+    border: 1px solid #333;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-family: 'Prompt', sans-serif;
+    font-size: 12px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.anonymous-btn.active {
+    background: #333;
+    color: white;
+}
+.chat-messages-container {
+    flex: 1;
+    background: #fff;
+    margin: 15px;
+    border-radius: 10px;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column; 
+}
+.chat-input-wrapper {
+    padding: 0 15px 15px 15px;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+.chat-input-wrapper input {
+    width: 100%;
+    padding: 12px 55px 12px 20px;
+    border: 2px solid #333;
+    border-radius: 30px;
+    font-family: 'Prompt', sans-serif;
+    font-size: 14px;
+    outline: none;
+}
+.chat-input-wrapper .send-msg-btn {
+    position: absolute;
+    right: 25px;
+    bottom: 21px;
+    background: #F05A28;
+    color: white;
+    border: none;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s;
+}
+.chat-input-wrapper .send-msg-btn:hover {
+    background: #d1491d;
+}
+
+.community-msg-bubble {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+    max-width: 80%;
+}
+.community-msg-bubble.my-msg {
+    align-self: flex-end; 
+    align-items: flex-end;
+}
+.msg-sender-name {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+.msg-text {
+    padding: 10px 15px;
+    border-radius: 15px;
+    font-size: 14px;
+    line-height: 1.4;
+    word-break: break-word; 
+}
+.my-msg .msg-text {
+    background: #F05A28;
+    color: white;
+    border-bottom-right-radius: 2px;
+}
+
+.chat-sidebar-right {
+    width: 280px;
+    background: #d4d4d4;
+    border-left: 1px solid #ccc;
+    padding: 15px;
+}
+.action-buttons-grid {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+.action-btn {
+    flex: 1;
+    background: #fff;
+    border: 1px solid #333;
+    padding: 10px 5px;
+    border-radius: 5px;
+    font-family: 'Prompt', sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+    font-weight: 500;
+}
+.friends-list-container .friend-item {
+    background: #fff;
+    padding: 12px 15px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-weight: 500;
+}
+.friend-item i { font-size: 24px; }
+
+/* ==========================================
+   Modals
+========================================== */
+.chat-modal {
+    display: none; 
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(2px);
+}
+.chat-modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 500px;
+    border: 4px solid #F05A28;
+    position: relative;
+    text-align: center;
+}
+.close-modal {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 20px;
+    cursor: pointer;
+    color: #333;
+}
+.chat-modal-content h3 {
+    margin-bottom: 25px;
+    margin-top: 0;
+}
+
+.search-box-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    border: 1px solid #333;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+.search-box-wrapper .search-icon {
+    padding: 15px;
+    font-size: 18px;
+    background: #fff;
+}
+.search-box-wrapper input {
+    flex: 1;
+    border: none;
+    padding: 15px 10px;
+    outline: none;
+}
+.search-box-wrapper .search-submit-btn {
+    background: #b5461e;
+    color: white;
+    border: none;
+    padding: 0 20px;
+    height: 100%;
+    align-self: stretch;
+    cursor: pointer;
+    font-family: 'Prompt';
+}
+
+.upload-image-box {
+    width: 80px;
+    height: 80px;
+    background: #e0e0e0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px auto;
+    font-size: 30px;
+    color: #333;
+    cursor: pointer;
+}
+.create-group-submit-btn {
+    background: #f7a877; 
+    color: #333;
+    border: none;
+    padding: 10px 30px;
+    border-radius: 5px;
+    font-family: 'Prompt';
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* ==========================================
+   UI ข้อมูลส่วนตัวแบบโปร่งแสง (Glassmorphism)
+   ========================================== */
+.profile-bg-container {
+    position: relative;
+    width: 100%;
+    min-height: 100%; 
+    height: auto; 
+    flex: 1 0 auto; 
+    background-image: url('https://images.unsplash.com/photo-1542224566-6e85f2e6772f?q=80&w=2000'); 
+    background-size: cover;
+    background-position: center;
+}
+
+.profile-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(255, 255, 255, 0.65); 
+    backdrop-filter: blur(2px);
+    z-index: 1;
+}
+
+.profile-header-actions {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 30px;
+}
+
+.edit-bg-btn {
+    background: #f97316;
+    color: white;
+    width: 60px;  
+    height: 60px; 
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    transition: 0.2s;
+    font-size: 24px; 
+}
+.edit-bg-btn:hover { transform: scale(1.05); }
+
+.profile-avatar-section {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 0;
+    margin-bottom: 40px;
+}
+
+#display-profile-name {
+    font-size: 26px !important; 
+    margin-top: 20px !important; 
+    letter-spacing: 0.5px; 
+    text-shadow: 0 2px 4px rgba(255, 255, 255, 0.8); 
+}
+
+.avatar-wrapper {
+    position: relative;
+    width: 120px;
+    height: 120px;
+}
+
+.avatar-wrapper img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid white;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.edit-avatar-btn {
+    position: absolute;
+    bottom: 5px;
+    right: 0;
+    background: white;
+    color: #333;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    font-size: 14px;
+}
+
+.profile-glass-grid {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    gap: 30px;
+    padding: 0 40px 20px 40px;
+    justify-content: center;
+}
+
+.glass-column {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; 
+    flex: 1;
+    max-width: 400px; 
+}
+
+.glass-divider {
+    width: 2px;
+    background: rgba(0, 0, 0, 0.4);
+    margin: 0 10px;
+    border-radius: 2px;
+}
+
+.glass-field {
+    background: rgba(255, 255, 255, 0.95); 
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-radius: 5px;
+    padding: 18px 24px; 
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); 
+}
+
+.glass-field label {
+    font-size: 14px; 
+    color: #444; 
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.glass-field input {
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid rgba(0,0,0,0.1); 
+    color: #111;
+    font-family: 'Prompt', sans-serif;
+    font-size: 16px; 
+    font-weight: 500;
+    outline: none;
+    padding-bottom: 8px; 
+}
+
+.glass-field input:focus { 
+    border-bottom: 2px solid #f97316; 
+}
+
+.glass-field input[readonly] { cursor: not-allowed; color: #444; border-bottom: none; }
+
+/* ดีไซน์ส่วนหน้า รีวิวรายวิชา */
+.review-card {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.review-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+}
+.stars {
+    color: #f59e0b;
+    font-size: 14px;
+    margin-bottom: 12px;
+}
+.comment-card {
+    background: white;
+    border-radius: 16px;
+    padding: 25px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    border: 1px solid #f3f4f6;
+}
+
+/* ==========================================
+   ป้ายวิชาแนะนำ (Recommended Course Pills)
+========================================== */
+.recommended-pill {
+    background: #ffffff;
+    border: 1px solid #d1d5db;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    color: #4b5563;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.recommended-pill:hover {
+    background: #ecfdf5; /* พื้นหลังสีเขียวอ่อนตอนชี้ */
+    border-color: #10b981; /* ขอบสีเขียว */
+    color: #047857;
+    transform: translateY(-2px); /* เด้งขึ้นนิดๆ */
+    box-shadow: 0 4px 8px rgba(16, 185, 129, 0.15);
+}
+
+/*ส่วนหน้าเพิ่มตารางวิชาด้วยตัวเอง*/
+.modern-input { width: 100%; padding: 10px 14px; border: 1px solid #d1d5db; border-radius: 8px; font-family: 'Prompt', sans-serif; font-size: 14px; outline: none; transition: 0.2s; box-sizing: border-box; }
+.modern-input:focus { border-color: #F05A28; box-shadow: 0 0 0 3px rgba(240, 90, 40, 0.1); }
+.autocomplete-dropdown { position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #d1d5db; border-radius: 8px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); max-height: 220px; overflow-y: auto; z-index: 2000; margin-top: 5px; }
+.autocomplete-item { padding: 12px 15px; cursor: pointer; border-bottom: 1px solid #f3f4f6; font-size: 13px; color: #374151; text-align: left; transition: 0.2s; }
+.autocomplete-item:last-child { border-bottom: none; }
+.autocomplete-item:hover { background-color: #fff1f2; color: #F05A28; padding-left: 20px; }
+
+.modern-input { width: 100%; padding: 10px 14px; border: 1px solid #d1d5db; border-radius: 8px; font-family: 'Prompt', sans-serif; font-size: 14px; outline: none; transition: 0.2s; box-sizing: border-box; }
+.modern-input:focus { border-color: #F05A28; box-shadow: 0 0 0 3px rgba(240, 90, 40, 0.1); }
+
+/* --- โหมดแชทหน้าต่างโปรแกรม (ลากและยืดหดได้ทุกมุม) --- */
+.ai-chat-section {
+    position: relative;
+    transition: none !important; /* 🔥 ปิดแอนิเมชันทั้งหมด เพื่อให้ลากติดมือ ไม่แข็งทื่อ */
+}
+
+.ai-chat-section.expanded {
+    position: fixed !important;
+    z-index: 9999 !important;
+    border-radius: 12px !important;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.4) !important;
+    max-width: none !important;  /* 🔥 ปลดล็อคข้อจำกัดความกว้าง */
+    max-height: none !important; /* 🔥 ปลดล็อคข้อจำกัดความสูง */
+    transform: none !important;  /* 🔥 ปลดล็อคการจัดตำแหน่งที่ขัดแย้งกับเมาส์ */
+    margin: 0 !important;
+}
+
+/* ซ่อนขอบจับตอนอยู่โหมดปกติ และแสดงตอนกดขยาย */
+.chat-resizer { display: none; position: absolute; }
+.ai-chat-section.expanded .chat-resizer { display: block; }
+
+/* ขยายพื้นที่จับขอบให้ใหญ่ขึ้น (8px) จะได้เอาเมาส์ชี้ง่ายๆ */
+.resizer-n { top: -8px; left: 0; width: 100%; height: 16px; cursor: n-resize; z-index: 10; }
+.resizer-s { bottom: -8px; left: 0; width: 100%; height: 16px; cursor: s-resize; z-index: 10; }
+.resizer-e { top: 0; right: -8px; width: 16px; height: 100%; cursor: e-resize; z-index: 10; }
+.resizer-w { top: 0; left: -8px; width: 16px; height: 100%; cursor: w-resize; z-index: 10; }
+.resizer-ne { top: -8px; right: -8px; width: 24px; height: 24px; cursor: ne-resize; z-index: 20; }
+.resizer-nw { top: -8px; left: -8px; width: 24px; height: 24px; cursor: nw-resize; z-index: 20; }
+.resizer-se { bottom: -8px; right: -8px; width: 24px; height: 24px; cursor: se-resize; z-index: 20; }
+.resizer-sw { bottom: -8px; left: -8px; width: 24px; height: 24px; cursor: sw-resize; z-index: 20; }
+
+
+/* ==========================================
+   ปรับขนาด Pop-up สร้างกลุ่มให้ใหญ่และใช้งานง่ายขึ้น
+   ========================================== */
+
+/* 1. ขยายความกว้างและพื้นที่ว่างด้านในของกล่อง Pop-up */
+#modal-create-group > div,
+#modal-create-group .modal-content,
+#modal-create-group .chat-modal-content {
+    max-width: 550px !important; /* ขยายความกว้าง (พอดีสายตา ไม่เทอะทะ) */
+    padding: 40px !important;    /* เพิ่มระยะขอบด้านในให้ดูโปร่ง */
+    border-radius: 16px !important; /* มุมโค้งมนให้ดูทันสมัย */
+}
+
+/* 2. ขยายปุ่มกากบาทปิด (X) ให้กดง่ายขึ้น */
+#modal-create-group .close,
+#modal-create-group .close-modal,
+#modal-create-group .close-btn {
+    font-size: 36px !important;
+    top: 20px !important;
+    right: 25px !important;
+    padding: 5px !important;
+}
+
+/* 3. ขยายหัวข้อ "สร้างกลุ่ม" */
+#modal-create-group h2,
+#modal-create-group h3 {
+    font-size: 22px !important;
+    margin-bottom: 25px !important;
+}
+
+/* 4. ขยายกรอบรูปอัปโหลดโปรไฟล์กลุ่ม (ถ้ามี) */
+#modal-create-group .upload-container i,
+#modal-create-group .image-upload-box i,
+#modal-create-group .fa-image {
+    font-size: 45px !important; /* ขยายไอคอนรูปภาพ */
+}
+
+/* 5. ขยายขนาดข้อความกำกับ (Label) */
+#modal-create-group label,
+#modal-create-group .input-label {
+    font-size: 15px !important;
+    margin-bottom: 8px !important;
+    color: #4b5563 !important;
+}
+
+/* 6. ขยายช่องกรอกชื่อกลุ่ม และ Dropdown ให้ใหญ่เต็มตา */
+#modal-create-group input[type="text"],
+#modal-create-group select {
+    font-size: 16px !important;
+    padding: 14px 16px !important; /* เพิ่มความอ้วนของช่องกรอก */
+    height: auto !important;
+    border-radius: 10px !important;
+    margin-bottom: 20px !important;
+}
+
+/* 7. ขยายปุ่มยืนยัน "สร้างกลุ่ม" */
+#modal-create-group button[onclick*="createNewGroup"],
+#modal-create-group button.btn-primary {
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    padding: 15px !important;
+    margin-top: 10px !important;
+    border-radius: 10px !important;
+}
+
+/* ==========================================
+   ปรับขนาด Pop-up ค้นหาเพื่อน/กลุ่มแชท ให้ใหญ่และสบายตาขึ้น
+   ========================================== */
+
+/* 1. ขยายความกว้างและพื้นที่ว่างด้านในกล่อง Pop-up */
+#modal-add-friend > div,
+#modal-add-friend .modal-content,
+#modal-add-friend .chat-modal-content {
+    max-width: 600px !important; /* ให้กว้างกว่ากล่องสร้างกลุ่มนิดนึง เผื่อโชว์รายชื่อผลลัพธ์ */
+    padding: 40px !important;    
+    border-radius: 16px !important; 
+}
+
+/* 2. ขยายปุ่มกากบาทปิด (X) */
+#modal-add-friend .close,
+#modal-add-friend .close-modal {
+    font-size: 36px !important;
+    top: 20px !important;
+    right: 25px !important;
+    padding: 5px !important;
+}
+
+/* 3. ขยายข้อความหัวข้อ */
+#modal-add-friend h2,
+#modal-add-friend h3 {
+    font-size: 22px !important;
+    margin-bottom: 25px !important;
+}
+
+/* 4. ขยายช่องกรอกข้อความค้นหาให้อ้วนขึ้น */
+#search-community-input {
+    font-size: 16px !important;
+    padding: 14px 16px !important; 
+    height: auto !important;
+    border-radius: 10px !important;
+}
+
+/* 5. ขยายปุ่ม "ค้นหาเลย" ให้สมดุลกับช่องกรอก */
+#btn-run-search {
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    padding: 14px 24px !important;
+    height: auto !important;
+    border-radius: 10px !important;
+}
+
+/* 6. ปรับพื้นที่แสดงผลลัพธ์การค้นหาด้านล่าง */
+#search-community-results {
+    margin-top: 25px !important;
+    max-height: 400px !important; /* ล็อคความสูงไว้ ถ้ารายชื่อเยอะเกินจะได้เลื่อนดูได้ ไม่ล้นจอ */
+    overflow-y: auto !important;
+    padding-right: 10px !important; /* เว้นระยะขอบให้แถบ Scrollbar สวยๆ */
+}

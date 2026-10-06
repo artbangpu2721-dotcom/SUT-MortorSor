@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ทดสอบตารางเรียน SUT MortorSor</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; }
+        .box { border: 1px solid #ccc; padding: 15px; border-radius: 8px; margin-top: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f05a28; color: white; }
+        button { padding: 10px 15px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background-color: #45a049; }
+    </style>
+</head>
+<body>
+
+    <h2>📅 ทดสอบดึงข้อมูลตารางเรียน (API: /timetable)</h2>
+    <button onclick="fetchTimetable()">🚀 โหลดตารางเรียน</button>
+
+    <div class="box">
+        <table id="courseTable">
+            <thead>
+                <tr>
+                    <th>รหัสวิชา</th>
+                    <th>ชื่อวิชา</th>
+                    <th>กลุ่ม (Sec)</th>
+                    <th>วันเรียน</th>
+                    <th>เวลาเริ่ม</th>
+                    <th>เวลาเลิก</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <tr><td colspan="6" style="text-align: center; color: gray;">ยังไม่มีข้อมูล...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        async function fetchTimetable() {
+            const tableBody = document.getElementById('tableBody');
+            tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">กำลังโหลดข้อมูล... ⏳</td></tr>';
+
+            try {
+                const response = await fetch('http://localhost:3000/api/timetable');
+                const result = await response.json();
+
+                if (result.status === "success") {
+                    tableBody.innerHTML = ''; 
+                    
+                    result.data.forEach(item => {
+                        const row = `<tr>
+                            <td>${item.COURSECODE}</td>
+                            <td>${item.COURSENAME}</td>
+                            <td>${item.SECTION}</td>
+                            <td>${item.DAY_NAME}</td>
+                            <td>${item.START_TIME}</td>
+                            <td>${item.END_TIME}</td>
+                        </tr>`;
+                        tableBody.innerHTML += row;
+                    });
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: red;">❌ ดึงข้อมูลไม่สำเร็จ ตรวจสอบเซิร์ฟเวอร์ Backend</td></tr>';
+            }
+        }
+    </script>
+
+</body>
+</html>

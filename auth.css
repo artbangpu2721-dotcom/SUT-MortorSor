@@ -1,0 +1,246 @@
+:root {
+    --primary-orange: #F05A28;
+    --gradient-bg: linear-gradient(135deg, #FF8C00 0%, #E65C00 100%);
+    --dark-gray: #231F20;
+    --light-gray: #F5F5F5;
+    --border-color: #E0E0E0;
+    --text-main: #333333;
+    --text-muted: #888888;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Prompt', sans-serif;
+}
+
+body {
+    background-color: var(--dark-gray);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+
+body::before {
+    content: '';
+    position: absolute;
+    width: 800px; /* ขยายวงแสงพื้นหลังให้ใหญ่ขึ้น */
+    height: 800px;
+    background: radial-gradient(circle, rgba(240,90,40,0.15) 0%, rgba(35,31,32,0) 70%);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 0;
+}
+
+/* 🚀 1. ขยายความกว้างของกล่องหลัก */
+.auth-wrapper {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 550px; /* ขยายจาก 450px เป็น 550px */
+    padding: 20px;
+}
+
+/* 🚀 2. ขยายพื้นที่ว่างด้านในกล่องให้โปร่งขึ้น */
+.auth-card {
+    background: #FFFFFF;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    padding: 50px 45px; /* เพิ่ม Padding จากเดิม 40px 35px */
+    overflow: hidden;
+}
+
+/* 🚀 3. ขยายโลโก้ */
+.auth-logo {
+    text-align: center;
+    font-size: 36px; /* ขยายจาก 28px */
+    margin-bottom: 35px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo-dark {
+    color: var(--dark-gray);
+    font-weight: 800;
+}
+
+.logo-tag {
+    font-size: 20px; /* ขยายจาก 16px */
+    background: var(--primary-orange);
+    color: white;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.auth-view {
+    display: none;
+    animation: fadeInSlide 0.4s ease forwards;
+}
+
+.auth-view.active {
+    display: block;
+}
+
+@keyframes fadeInSlide {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* 🚀 4. ขยายหัวข้อ */
+.auth-title {
+    font-size: 28px; /* ขยายจาก 24px */
+    color: var(--text-main);
+    font-weight: 600;
+    margin-bottom: 8px;
+    text-align: center;
+}
+
+.auth-subtitle {
+    color: var(--text-muted);
+    font-size: 16px; /* ขยายจาก 14px */
+    text-align: center;
+    margin-bottom: 35px;
+}
+
+/* 🚀 5. ขยายฟอร์มกรอกข้อมูล */
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 16px; /* ขยายจาก 14px */
+    color: var(--text-main);
+    margin-bottom: 10px;
+    font-weight: 500;
+}
+
+.input-with-icon {
+    position: relative;
+}
+
+.input-with-icon i {
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
+    font-size: 16px; /* ขยายไอคอน */
+}
+
+.input-with-icon input {
+    width: 100%;
+    padding: 15px 20px 15px 48px; /* ขยายกล่องให้สูงและกว้างขึ้น */
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    font-size: 16px; /* ขยายตัวอักษรที่พิมพ์จาก 14px เป็น 16px */
+    outline: none;
+    transition: all 0.3s ease;
+    background: #FAFAFA;
+}
+
+.input-with-icon input:focus {
+    border-color: var(--primary-orange);
+    background: white;
+    box-shadow: 0 0 0 3px rgba(240, 90, 40, 0.1);
+}
+
+/* 🚀 6. ขยายตัวเลือกด้านล่าง */
+.auth-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 15px; /* ขยายจาก 13px */
+    margin-bottom: 30px;
+}
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-muted);
+    cursor: pointer;
+}
+
+.remember-me input {
+    width: 16px;
+    height: 16px;
+}
+
+.text-link {
+    color: #555;
+    cursor: pointer;
+    text-decoration: none;
+    transition: color 0.2s;
+    font-weight: 500;
+}
+
+.text-link:hover, .text-link.highlight {
+    color: var(--primary-orange);
+}
+
+/* 🚀 7. ขยายปุ่ม */
+.auth-btn {
+    width: 100%;
+    background: var(--gradient-bg);
+    color: white;
+    border: none;
+    padding: 16px; /* ขยายความสูงปุ่ม */
+    border-radius: 10px;
+    font-size: 18px; /* ขยายจาก 16px */
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(240, 90, 40, 0.2);
+}
+
+.auth-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(240, 90, 40, 0.4);
+}
+
+.auth-footer {
+    text-align: center;
+    margin-top: 30px;
+    font-size: 16px; /* ขยายจาก 14px */
+    color: var(--text-muted);
+}
+
+.mt-4 { margin-top: 35px; }
+
+/* 🚀 ทำให้หน้าจอและตัวการ์ดรองรับการ Scroll เมื่อข้อมูลยาวเกินไป */
+.auth-wrapper {
+    min-height: 100vh;
+    height: auto; /* ปลดล็อกความสูงแบบตายตัว */
+    padding: 40px 20px; /* เพิ่มขอบบนล่างไม่ให้การ์ดชิดขอบจอเกินไป */
+    box-sizing: border-box;
+    overflow-y: auto; 
+}
+
+.auth-card {
+    max-height: 90vh; /* ล็อคความสูงการ์ดไว้ที่ไม่เกิน 90% ของหน้าจอ */
+    overflow-y: auto; /* ถ้าข้อมูลยาวกว่า 90vh ให้โชว์ Scrollbar ขึ้นมา */
+}
+
+/* ✨ ของแถม: ปรับแต่ง Scrollbar ของการ์ดให้เล็กและดูมินิมอล */
+.auth-card::-webkit-scrollbar {
+    width: 6px;
+}
+.auth-card::-webkit-scrollbar-track {
+    background: transparent; 
+}
+.auth-card::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1; 
+    border-radius: 10px;
+}
+.auth-card::-webkit-scrollbar-thumb:hover {
+    background-color: #94a3b8; 
+}

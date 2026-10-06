@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SUT MortorSor | Authentication</title>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="auth.css">
+</head>
+<body>
+
+    <div class="auth-wrapper">
+        <div class="auth-card">
+            
+            <div class="auth-logo">
+                <span class="logo-dark">SUT</span>
+                <span class="logo-tag">MortorSor</span>
+            </div>
+
+            <!-- ============================== -->
+            <!-- 1. หน้า Login -->
+            <!-- ============================== -->
+            <div id="view-login" class="auth-view active">
+                <h2 class="auth-title">เข้าสู่ระบบ</h2>
+                <p class="auth-subtitle">จัดการตารางเรียนของคุณได้ง่ายๆ</p>
+                
+                <form id="form-login">
+                    <div class="form-group">
+                        <label>รหัสนักศึกษา</label>
+                        <div class="input-with-icon">
+                            <i class="fa-regular fa-id-badge"></i>
+                            <input type="text" id="login-studentid" placeholder="เช่น B67XXXXX" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>รหัสผ่าน</label>
+                        <div class="input-with-icon" style="position: relative;">
+                            <!-- ไอคอนแม่กุญแจ (ซ้าย) -->
+                            <i class="fa-solid fa-lock"></i>
+                            
+                            <input type="password" id="login-password" placeholder="••••••••" required style="padding-right: 40px;">
+                            
+                            <!-- ไอคอนเปิด/ปิดตา (บังคับขวา) -->
+                            <i class="fa-regular fa-eye" id="toggle-login-password" onclick="togglePassword('login-password', 'toggle-login-password')" style="position: absolute; right: 15px !important; left: auto !important; top: 50%; transform: translateY(-50%); cursor: pointer; color: #9ca3af; transition: 0.2s; z-index: 10;" onmouseover="this.style.color='#F05A28'" onmouseout="this.style.color='#9ca3af'"></i>
+                        </div>
+                    </div>
+                    <div class="auth-options">
+                        <label class="remember-me">
+                            <input type="checkbox"> จำฉันไว้ในระบบ
+                        </label>
+                        <span class="text-link" onclick="switchAuthView('view-forgot')">ลืมรหัสผ่าน?</span>
+                    </div>
+
+                    <button type="submit" class="auth-btn">เข้าสู่ระบบ</button>
+                </form>
+                
+                <div class="auth-footer">
+                    ยังไม่มีบัญชีใช่ไหม? <span class="text-link highlight" onclick="switchAuthView('view-register')">สมัครสมาชิกเลย</span>
+                </div>
+            </div>
+
+            <!-- ============================== -->
+            <!-- 2. หน้า Register -->
+            <!-- ============================== -->
+            <div id="view-register" class="auth-view">
+                <h2 class="auth-title">สร้างบัญชีใหม่</h2>
+                <p class="auth-subtitle">เริ่มต้นวางแผนการเรียนกับเรา</p>
+                
+                <form id="form-register">
+                    <div class="form-group">
+                        <label>รหัสนักศึกษา</label>
+                        <div class="input-with-icon">
+                            <i class="fa-regular fa-id-badge"></i>
+                            <input type="text" id="reg-studentid" placeholder="เช่น B67XXXXX" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group" style="display: flex; gap: 10px;">
+                        <div style="flex: 1;">
+                            <label>ชื่อจริง</label>
+                            <div class="input-with-icon">
+                                <i class="fa-regular fa-user"></i>
+                                <input type="text" id="reg-firstname" placeholder="ชื่อจริง" required>
+                            </div>
+                        </div>
+                        <div style="flex: 1;">
+                            <label>นามสกุล</label>
+                            <div class="input-with-icon">
+                                <i class="fa-regular fa-user"></i>
+                                <input type="text" id="reg-lastname" placeholder="นามสกุล" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>อีเมล</label>
+                        <div class="input-with-icon">
+                            <i class="fa-regular fa-envelope"></i>
+                            <input type="email" id="reg-email" placeholder="อีเมลมหาวิทยาลัย หรือ อีเมลส่วนตัว" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>สำนักวิชา <span style="color: #F05A28;">*</span></label>
+                        <div style="position: relative;">
+                            <select id="register-faculty" required style="width: 100%; padding: 12px 16px; border-radius: 8px; border: 1px solid #e5e7eb; background-color: #f9fafb; font-family: 'Prompt', sans-serif; font-size: 15px; color: #4b5563; outline: none; appearance: none; cursor: pointer;">
+                                <option value="" disabled selected>⏳ กำลังโหลดข้อมูลสำนักวิชา...</option>
+                            </select>
+                            <div style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); pointer-events: none;">
+                                <i class="fa-solid fa-chevron-down" style="color: #9ca3af; font-size: 14px;"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>สาขาวิชา <span style="color: #F05A28;">*</span></label>
+                        <div style="position: relative;">
+                            <select id="register-major" required disabled style="width: 100%; padding: 12px 16px; border-radius: 8px; border: 1px solid #e5e7eb; background-color: #f9fafb; font-family: 'Prompt', sans-serif; font-size: 15px; color: #4b5563; outline: none; appearance: none; cursor: pointer;">
+                                <option value="" disabled selected>-- กรุณาเลือกสำนักวิชาก่อน --</option>
+                            </select>
+                            <div style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); pointer-events: none;">
+                                <i class="fa-solid fa-chevron-down" style="color: #9ca3af; font-size: 14px;"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>รหัสผ่าน</label>
+                        <div class="input-with-icon" style="position: relative;">
+                            <!-- ไอคอนแม่กุญแจ (ซ้าย) -->
+                            <i class="fa-solid fa-lock"></i>
+                            
+                            <input type="password" id="reg-password" placeholder="สร้างรหัสผ่านอย่างน้อย 6 ตัวอักษร" required style="padding-right: 40px;">
+                            
+                            <!-- ไอคอนเปิด/ปิดตา (บังคับขวา) -->
+                            <i class="fa-regular fa-eye" id="toggle-reg-password" onclick="togglePassword('reg-password', 'toggle-reg-password')" style="position: absolute; right: 15px !important; left: auto !important; top: 50%; transform: translateY(-50%); cursor: pointer; color: #9ca3af; transition: 0.2s; z-index: 10;" onmouseover="this.style.color='#F05A28'" onmouseout="this.style.color='#9ca3af'"></i>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="auth-btn">สมัครสมาชิก</button>
+                </form>
+                
+                <div class="auth-footer">
+                    มีบัญชีอยู่แล้ว? <span class="text-link highlight" onclick="switchAuthView('view-login')">เข้าสู่ระบบ</span>
+                </div>
+            </div>
+
+            <!-- ============================== -->
+            <!-- 3. หน้า Forgot Password -->
+            <!-- ============================== -->
+            <div id="view-forgot" class="auth-view">
+                <h2 class="auth-title">รีเซ็ตรหัสผ่าน</h2>
+                <p class="auth-subtitle">กรุณากรอกอีเมลของคุณเพื่อรับลิงก์ตั้งรหัสผ่านใหม่</p>
+                
+                <form id="form-forgot">
+                    <div class="form-group">
+                        <label>อีเมลที่ลงทะเบียนไว้</label>
+                        <div class="input-with-icon">
+                            <i class="fa-regular fa-envelope"></i>
+                            <input type="email" placeholder="example@email.com" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="auth-btn">ส่งลิงก์รีเซ็ตรหัสผ่าน</button>
+                </form>
+                
+                <div class="auth-footer mt-4">
+                    <span class="text-link" onclick="switchAuthView('view-login')"><i class="fa-solid fa-arrow-left"></i> กลับไปหน้าเข้าสู่ระบบ</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ลิงก์ไฟล์ JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="auth.js"></script>
+</body>
+</html>
