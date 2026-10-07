@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (facultySelect && majorSelect) {
         try {
-            const response = await fetch('https://modern-apples-give.loca.lt](https://modern-apples-give.loca.lt');
+            const response = await fetch('https://genome-critics-vid-dylan.trycloudflare.com](https://genome-critics-vid-dylan.trycloudflare.com');
             const result = await response.json();
             
             if (result.status === 'success') {

@@ -120,7 +120,7 @@ function showSuccessModal(title, desc) {
 // ==========================================
 async function fetchCourses() {
     try {
-        const timetableUrl = `https://modern-apples-give.loca.lt](https://modern-apples-give.loca.lt`;
+        const timetableUrl = `https://genome-critics-vid-dylan.trycloudflare.com](https://genome-critics-vid-dylan.trycloudflare.com`;
         const response = await fetch(timetableUrl);
 
         if (response.ok) {
@@ -131,7 +131,7 @@ async function fetchCourses() {
         }
 
         if (masterCourses.length === 0) {
-            const masterRes = await fetch(`https://modern-apples-give.loca.lt](https://modern-apples-give.loca.lt`);
+            const masterRes = await fetch(`https://genome-critics-vid-dylan.trycloudflare.com](https://genome-critics-vid-dylan.trycloudflare.com`);
             if (masterRes.ok) {
                 const masterResult = await masterRes.json();
                 masterCourses = extractRows(masterResult).map(normalizeCourseRow).filter(c => c.COURSECODE);
@@ -571,7 +571,7 @@ window.handleAutoRecommend = async function() {
     try {
         const majorParam = encodeURIComponent(selectedMajor);
         // ดึงแผนการเรียนจากฐานข้อมูลตามสาขา ปี และเทอม ปัจจุบันที่ผู้ใช้เปิดอยู่
-        const response = await fetch(`https://modern-apples-give.loca.lt](https://modern-apples-give.loca.lt`);
+        const response = await fetch(`https://genome-critics-vid-dylan.trycloudflare.com](https://genome-critics-vid-dylan.trycloudflare.com`);
         const result = await response.json();
 
         if (result.status === "success" && result.data && result.data.length > 0) {
@@ -850,7 +850,7 @@ window.sendAIMessage = async function() {
     chatHistory.scrollTop = chatHistory.scrollHeight;
 
     try {
-        const response = await fetch('https://modern-apples-give.loca.lt](https://modern-apples-give.loca.lt', {
+        const response = await fetch('https://genome-critics-vid-dylan.trycloudflare.com](https://genome-critics-vid-dylan.trycloudflare.com', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -1563,7 +1563,7 @@ function initReviewSystem() {
     async function fetchCoursesFromAPI(keyword = '') {
         if (!reviewGrid) return;
         try {
-            const response = await fetch(`https://modern-apples-give.loca.lt](https://modern-apples-give.loca.lt`);
+            const response = await fetch(`https://genome-critics-vid-dylan.trycloudflare.com](https://genome-critics-vid-dylan.trycloudflare.com`);
             const result = await response.json();
             reviewGrid.innerHTML = '';
 
