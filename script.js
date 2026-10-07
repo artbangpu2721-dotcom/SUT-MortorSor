@@ -120,7 +120,7 @@ function showSuccessModal(title, desc) {
 // ==========================================
 async function fetchCourses() {
     try {
-        const timetableUrl = `http://localhost:3000/api/timetable?acadyear=2569&semester=${currentSemester}`;
+        const timetableUrl = `https://modern-apples-give.loca.lt](https://modern-apples-give.loca.lt`;
         const response = await fetch(timetableUrl);
 
         if (response.ok) {
@@ -131,7 +131,7 @@ async function fetchCourses() {
         }
 
         if (masterCourses.length === 0) {
-            const masterRes = await fetch(`http://localhost:3000/api/courses`);
+            const masterRes = await fetch(`https://modern-apples-give.loca.lt](https://modern-apples-give.loca.lt`);
             if (masterRes.ok) {
                 const masterResult = await masterRes.json();
                 masterCourses = extractRows(masterResult).map(normalizeCourseRow).filter(c => c.COURSECODE);
@@ -571,7 +571,7 @@ window.handleAutoRecommend = async function() {
     try {
         const majorParam = encodeURIComponent(selectedMajor);
         // ดึงแผนการเรียนจากฐานข้อมูลตามสาขา ปี และเทอม ปัจจุบันที่ผู้ใช้เปิดอยู่
-        const response = await fetch(`http://localhost:3000/api/recommend?major=${majorParam}&year=${currentYearLevel}&semester=${currentSemester}`);
+        const response = await fetch(`https://modern-apples-give.loca.lt](https://modern-apples-give.loca.lt`);
         const result = await response.json();
 
         if (result.status === "success" && result.data && result.data.length > 0) {
@@ -850,7 +850,7 @@ window.sendAIMessage = async function() {
     chatHistory.scrollTop = chatHistory.scrollHeight;
 
     try {
-        const response = await fetch('http://localhost:3000/api/aichat', {
+        const response = await fetch('https://modern-apples-give.loca.lt](https://modern-apples-give.loca.lt', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -1563,7 +1563,7 @@ function initReviewSystem() {
     async function fetchCoursesFromAPI(keyword = '') {
         if (!reviewGrid) return;
         try {
-            const response = await fetch(`http://localhost:3000/api/courses?keyword=${encodeURIComponent(keyword)}`);
+            const response = await fetch(`https://modern-apples-give.loca.lt](https://modern-apples-give.loca.lt`);
             const result = await response.json();
             reviewGrid.innerHTML = '';
 
