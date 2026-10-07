@@ -49,7 +49,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (facultySelect && majorSelect) {
         try {
-            const response = await fetch('https://genome-critics-vid-dylan.trycloudflare.com](https://genome-critics-vid-dylan.trycloudflare.com');
+            // 🔥 แก้ไข: เติม /api/programs ให้สมบูรณ์
+            const response = await fetch('https://genome-critics-vid-dylan.trycloudflare.com/api/programs');
             const result = await response.json();
             
             if (result.status === 'success') {

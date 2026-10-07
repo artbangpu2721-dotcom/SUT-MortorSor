@@ -120,7 +120,7 @@ function showSuccessModal(title, desc) {
 // ==========================================
 async function fetchCourses() {
     try {
-        const timetableUrl = `https://genome-critics-vid-dylan.trycloudflare.com](https://genome-critics-vid-dylan.trycloudflare.com`;
+        const timetableUrl = `https://genome-critics-vid-dylan.trycloudflare.com/api/timetable?acadyear=2569&semester=${currentSemester}`;
         const response = await fetch(timetableUrl);
 
         if (response.ok) {
@@ -131,7 +131,7 @@ async function fetchCourses() {
         }
 
         if (masterCourses.length === 0) {
-            const masterRes = await fetch(`https://genome-critics-vid-dylan.trycloudflare.com](https://genome-critics-vid-dylan.trycloudflare.com`);
+            const masterRes = await fetch(`https://genome-critics-vid-dylan.trycloudflare.com/api/courses`);
             if (masterRes.ok) {
                 const masterResult = await masterRes.json();
                 masterCourses = extractRows(masterResult).map(normalizeCourseRow).filter(c => c.COURSECODE);
@@ -571,7 +571,7 @@ window.handleAutoRecommend = async function() {
     try {
         const majorParam = encodeURIComponent(selectedMajor);
         // ดึงแผนการเรียนจากฐานข้อมูลตามสาขา ปี และเทอม ปัจจุบันที่ผู้ใช้เปิดอยู่
-        const response = await fetch(`https://genome-critics-vid-dylan.trycloudflare.com](https://genome-critics-vid-dylan.trycloudflare.com`);
+        const response = await fetch(`https://genome-critics-vid-dylan.trycloudflare.com/api/recommend?major=${majorParam}&year=${currentYearLevel}&semester=${currentSemester}`);
         const result = await response.json();
 
         if (result.status === "success" && result.data && result.data.length > 0) {
@@ -745,7 +745,7 @@ function aiAutoAddCourse(courseCode, pillElement) {
             if (isOverlap) break;
         }
 
-        if (isOverlap) return alert(`⚠️️ ไม่สามารถเพิ่มวิชานี้ได้! เวลาเรียนทับซ้อนกับวิชา ${overlapCourseName}`);
+        if (isOverlap) return alert(`⚠ ไม่สามารถเพิ่มวิชานี้ได้! เวลาเรียนทับซ้อนกับวิชา ${overlapCourseName}`);
 
         schedulesToProcess.forEach(schedule => {
             let startHour = parseInt(getStart(schedule).split(':')[0]);
@@ -850,7 +850,7 @@ window.sendAIMessage = async function() {
     chatHistory.scrollTop = chatHistory.scrollHeight;
 
     try {
-        const response = await fetch('https://genome-critics-vid-dylan.trycloudflare.com](https://genome-critics-vid-dylan.trycloudflare.com', {
+        const response = await fetch('https://genome-critics-vid-dylan.trycloudflare.com/api/aichat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -1563,7 +1563,8 @@ function initReviewSystem() {
     async function fetchCoursesFromAPI(keyword = '') {
         if (!reviewGrid) return;
         try {
-            const response = await fetch(`https://genome-critics-vid-dylan.trycloudflare.com](https://genome-critics-vid-dylan.trycloudflare.com`);
+            // 🔥 แก้ไข: เติม /api/courses ให้สมบูรณ์
+            const response = await fetch(`https://genome-critics-vid-dylan.trycloudflare.com/api/courses`);
             const result = await response.json();
             reviewGrid.innerHTML = '';
 
@@ -3095,7 +3096,7 @@ window.resetTimetable = function() {
             selectedCourseIds = [];
             selectedCoursesData = [];
             
-            // 2. เอาติ๊กถูกออกจาก Checkbox ในรายชื่อวิชาด้านล่างทั้งหมด
+            // 2. เอาติ๊กถูกออกจาก Checkboxในรายชื่อวิชาด้านล่างทั้งหมด
             document.querySelectorAll('.course-checkbox').forEach(cb => {
                 cb.checked = false;
             });
