@@ -1571,10 +1571,9 @@ function initReviewSystem() {
         if (!reviewGrid) return;
         try {
             // 🔥 แก้ไข: เติม /api/courses ให้สมบูรณ์
-            const response = await fetch(`https://transfer-matcher-cable.ngrok-free.dev/api/courses`, {
-    headers: { 'ngrok-skip-browser-warning': 'true' }
-});
-            
+const response = await fetch('https://transfer-matcher-cable.ngrok-free.dev/api/courses', {
+                headers: { 'ngrok-skip-browser-warning': 'true' }
+            });         
             const result = await response.json();
             reviewGrid.innerHTML = '';
 
