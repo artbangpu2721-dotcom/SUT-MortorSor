@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (facultySelect && majorSelect) {
         try {
             // 🔥 แก้ไข: เติม /api/programs ให้สมบูรณ์
-   const response = await fetch('https://transfer-matcher-cable.ngrok-free.dev/api/programs', {
+   const response = await fetch('https://rush-stand-provincial-ranges.trycloudflare.com/api/programs', {
                 headers: {
                     'ngrok-skip-browser-warning': 'true'
                 }
