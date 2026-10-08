@@ -120,7 +120,7 @@ function showSuccessModal(title, desc) {
 // ==========================================
 async function fetchCourses() {
     try {
-        const timetableUrl = `https://genome-critics-vid-dylan.trycloudflare.com/api/timetable?acadyear=2569&semester=${currentSemester}`;
+        const timetableUrl = `https://transfer-matcher-cable.ngrok-free.dev/api/timetable?acadyear=2569&semester=${currentSemester}`;
         const response = await fetch(timetableUrl);
 
         if (response.ok) {
@@ -131,7 +131,7 @@ async function fetchCourses() {
         }
 
         if (masterCourses.length === 0) {
-            const masterRes = await fetch(`https://genome-critics-vid-dylan.trycloudflare.com/api/courses`);
+            const masterRes = await fetch(`https://transfer-matcher-cable.ngrok-free.dev/api/courses`);
             if (masterRes.ok) {
                 const masterResult = await masterRes.json();
                 masterCourses = extractRows(masterResult).map(normalizeCourseRow).filter(c => c.COURSECODE);
@@ -571,7 +571,7 @@ window.handleAutoRecommend = async function() {
     try {
         const majorParam = encodeURIComponent(selectedMajor);
         // ดึงแผนการเรียนจากฐานข้อมูลตามสาขา ปี และเทอม ปัจจุบันที่ผู้ใช้เปิดอยู่
-        const response = await fetch(`https://genome-critics-vid-dylan.trycloudflare.com/api/recommend?major=${majorParam}&year=${currentYearLevel}&semester=${currentSemester}`);
+        const response = await fetch(`https://transfer-matcher-cable.ngrok-free.dev/api/recommend?major=${majorParam}&year=${currentYearLevel}&semester=${currentSemester}`);
         const result = await response.json();
 
         if (result.status === "success" && result.data && result.data.length > 0) {
@@ -850,7 +850,7 @@ window.sendAIMessage = async function() {
     chatHistory.scrollTop = chatHistory.scrollHeight;
 
     try {
-        const response = await fetch('https://genome-critics-vid-dylan.trycloudflare.com/api/aichat', {
+        const response = await fetch('https://transfer-matcher-cable.ngrok-free.dev/api/aichat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -1564,7 +1564,7 @@ function initReviewSystem() {
         if (!reviewGrid) return;
         try {
             // 🔥 แก้ไข: เติม /api/courses ให้สมบูรณ์
-            const response = await fetch(`https://genome-critics-vid-dylan.trycloudflare.com/api/courses`);
+            const response = await fetch(`https://transfer-matcher-cable.ngrok-free.dev/api/courses`);
             const result = await response.json();
             reviewGrid.innerHTML = '';
 
@@ -1718,7 +1718,90 @@ async function checkUserSession() {
     loadSchedule();
 }
 
-async function saveProfile() { showSuccessModal('สำเร็จ!', 'บันทึกข้อมูลส่วนตัวเรียบร้อยแล้ว'); }
+// ==========================================
+// 1. ฟังก์ชันบันทึกข้อมูลส่วนตัวลงฐานข้อมูลจริง
+// ==========================================
+async function saveProfile() { 
+    const studentId = localStorage.getItem('sut_student_id');
+    if (!studentId) return alert('กรุณาเข้าสู่ระบบก่อนทำการบันทึกครับ');
+
+    const btn = document.getElementById('save-profile-btn');
+    if (!btn) return;
+    
+    // เปลี่ยนสถานะปุ่มตอนกำลังเซฟ
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> กำลังบันทึก...';
+    btn.disabled = true;
+
+    // ดึงข้อมูลจากหน้าจอ
+    const age = document.getElementById('profile-age') ? document.getElementById('profile-age').value : '';
+    const freeTime = document.getElementById('profile-freetime') ? document.getElementById('profile-freetime').value : '';
+    const mbti = document.getElementById('profile-mbti') ? document.getElementById('profile-mbti').value : '';
+    const learningStyle = document.getElementById('profile-learning-style') ? document.getElementById('profile-learning-style').value : '';
+    const socialMedia = document.getElementById('profile-social') ? document.getElementById('profile-social').value : '';
+
+    try {
+        // ส่งข้อมูลขึ้น Supabase
+        const { error } = await supabaseClient
+            .from('profiles')
+            .update({
+                age: age,
+                free_time: freeTime,
+                mbti: mbti,
+                learning_style: learningStyle,
+                social_media: socialMedia
+            })
+            .eq('student_id', studentId);
+
+        if (error) throw error;
+        
+        // เซฟเสร็จแล้วค่อยเด้งแจ้งเตือน
+        showSuccessModal('สำเร็จ!', 'บันทึกข้อมูลส่วนตัวลงระบบเรียบร้อยแล้ว');
+    } catch (error) {
+        console.error("Save profile error:", error);
+        alert('เกิดข้อผิดพลาดในการบันทึกข้อมูล: ' + error.message);
+    } finally {
+        // คืนค่าปุ่มกลับเป็นเหมือนเดิม
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    }
+}
+
+// ==========================================
+// 2. ฟังก์ชันส่งข้อความแชทเข้าห้องรวม / ห้องส่วนตัว
+// ==========================================
+async function sendCommunityMessage() {
+    const inputEl = document.getElementById('community-msg-input');
+    if (!inputEl) return;
+    
+    const msg = inputEl.value.trim();
+    if (!msg) return; 
+
+    if (!currentChatRoomId) {
+        alert('กรุณาเลือกห้องแชทเพื่อนด้านซ้ายมือก่อนส่งข้อความครับ');
+        return;
+    }
+
+    const studentId = localStorage.getItem('sut_student_id');
+    const originalText = inputEl.value;
+    
+    // เคลียร์ช่องพิมพ์ทันทีให้รู้สึกว่าส่งแล้ว
+    inputEl.value = ''; 
+
+    try {
+        const { error } = await supabaseClient.from('chat_messages').insert([
+            { room_id: currentChatRoomId, sender_id: studentId, message: msg }
+        ]);
+        
+        if (error) {
+            inputEl.value = originalText; // ถ้าเน็ตหลุด/ส่งไม่สำเร็จ คืนข้อความกลับมาให้
+            throw error;
+        }
+    } catch (err) {
+        console.error("Send message error:", err);
+        alert('ส่งข้อความไม่สำเร็จ: ' + err.message);
+    }
+}
 
 window.logoutUser = async function() {
     if (!confirm('ต้องการออกจากระบบใช่หรือไม่?')) return;
