@@ -120,7 +120,7 @@ function showSuccessModal(title, desc) {
 // ==========================================
 async function fetchCourses() {
     try {
-        const timetableUrl = `https://press-renaissance-highlighted-biological.trycloudflare.com   /api/timetable?acadyear=2569&semester=${currentSemester}`;
+        const timetableUrl = `https://press-renaissance-highlighted-biological.trycloudflare.com/api/timetable?acadyear=2569&semester=${currentSemester}`;
        const response = await fetch(timetableUrl, {
     headers: {
         'ngrok-skip-browser-warning': 'true'
@@ -135,7 +135,7 @@ async function fetchCourses() {
         }
 
         if (masterCourses.length === 0) {
-          const masterRes = await fetch(`https://press-renaissance-highlighted-biological.trycloudflare.com   /api/courses`, { headers: { 'ngrok-skip-browser-warning': 'true' } });
+          const masterRes = await fetch(`https://press-renaissance-highlighted-biological.trycloudflare.com/api/courses`, { headers: { 'ngrok-skip-browser-warning': 'true' } });
             if (masterRes.ok) {
                 const masterResult = await masterRes.json();
                 masterCourses = extractRows(masterResult).map(normalizeCourseRow).filter(c => c.COURSECODE);
@@ -575,7 +575,7 @@ window.handleAutoRecommend = async function() {
     try {
         const majorParam = encodeURIComponent(selectedMajor);
         // ดึงแผนการเรียนจากฐานข้อมูลตามสาขา ปี และเทอม ปัจจุบันที่ผู้ใช้เปิดอยู่
-      const response = await fetch(`https://press-renaissance-highlighted-biological.trycloudflare.com   /api/recommend?major=${majorParam}&year=${currentYearLevel}&semester=${currentSemester}`, { headers: { 'ngrok-skip-browser-warning': 'true' } });
+      const response = await fetch(`https://press-renaissance-highlighted-biological.trycloudflare.com/api/recommend?major=${majorParam}&year=${currentYearLevel}&semester=${currentSemester}`, { headers: { 'ngrok-skip-browser-warning': 'true' } });
         const result = await response.json();
 
         if (result.status === "success" && result.data && result.data.length > 0) {
@@ -854,7 +854,7 @@ window.sendAIMessage = async function() {
     chatHistory.scrollTop = chatHistory.scrollHeight;
 
     try {
-      const response = await fetch('https://press-renaissance-highlighted-biological.trycloudflare.com   /api/aichat', {
+      const response = await fetch('https://press-renaissance-highlighted-biological.trycloudflare.com/api/aichat', {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json',
@@ -1571,7 +1571,7 @@ function initReviewSystem() {
         if (!reviewGrid) return;
         try {
             // 🔥 แก้ไข: เติม /api/courses ให้สมบูรณ์
-const response = await fetch(`https://press-renaissance-highlighted-biological.trycloudflare.com   /api/courses`, { headers: { 'ngrok-skip-browser-warning': 'true' } });       
+const response = await fetch(`https://press-renaissance-highlighted-biological.trycloudflare.com/api/courses`, { headers: { 'ngrok-skip-browser-warning': 'true' } });       
             const result = await response.json();
             reviewGrid.innerHTML = '';
 
