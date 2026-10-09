@@ -120,7 +120,7 @@ function showSuccessModal(title, desc) {
 // ==========================================
 async function fetchCourses() {
     try {
-        const timetableUrl = `https://press-renaissance-highlighted-biological.trycloudflare.com/api/timetable?acadyear=2569&semester=${currentSemester}`;
+        const timetableUrl = `https://bell-lanka-voices-scheduled.trycloudflare.com/api/timetable?acadyear=2569&semester=${currentSemester}`;
        const response = await fetch(timetableUrl, {
     headers: {
         'ngrok-skip-browser-warning': 'true'
@@ -135,16 +135,13 @@ async function fetchCourses() {
         }
 
         if (masterCourses.length === 0) {
-          const masterRes = await fetch(`https://press-renaissance-highlighted-biological.trycloudflare.com/api/courses`, { headers: { 'ngrok-skip-browser-warning': 'true' } });
+          const masterRes = await fetch(`https://bell-lanka-voices-scheduled.trycloudflare.com/api/courses`);
             if (masterRes.ok) {
                 const masterResult = await masterRes.json();
                 masterCourses = extractRows(masterResult).map(normalizeCourseRow).filter(c => c.COURSECODE);
             }
         }
-        
-        setupCourseSearch('search-major', 'courses-major');
-        setupCourseSearch('search-free', 'courses-free');
-        setupCourseSearch('search-gen', 'courses-gen');
+      setupCourseSearch('search-all', 'courses-all');
     } catch (error) {
         console.error('❌ เกิดข้อผิดพลาดในการดึงข้อมูล:', error);
         allCourses = [];
@@ -575,7 +572,7 @@ window.handleAutoRecommend = async function() {
     try {
         const majorParam = encodeURIComponent(selectedMajor);
         // ดึงแผนการเรียนจากฐานข้อมูลตามสาขา ปี และเทอม ปัจจุบันที่ผู้ใช้เปิดอยู่
-      const response = await fetch(`https://press-renaissance-highlighted-biological.trycloudflare.com/api/recommend?major=${majorParam}&year=${currentYearLevel}&semester=${currentSemester}`, { headers: { 'ngrok-skip-browser-warning': 'true' } });
+     const response = await fetch(`https://bell-lanka-voices-scheduled.trycloudflare.com/api/recommend?major=${majorParam}&year=${currentYearLevel}&semester=${currentSemester}`);
         const result = await response.json();
 
         if (result.status === "success" && result.data && result.data.length > 0) {
@@ -854,11 +851,10 @@ window.sendAIMessage = async function() {
     chatHistory.scrollTop = chatHistory.scrollHeight;
 
     try {
-      const response = await fetch('https://press-renaissance-highlighted-biological.trycloudflare.com/api/aichat', {
+      const response = await fetch('https://bell-lanka-voices-scheduled.trycloudflare.com/api/aichat', {
             method: 'POST',
             headers: { 
-                'Content-Type': 'application/json',
-                'ngrok-skip-browser-warning': 'true' 
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify({
                 message: userText,
@@ -1571,7 +1567,7 @@ function initReviewSystem() {
         if (!reviewGrid) return;
         try {
             // 🔥 แก้ไข: เติม /api/courses ให้สมบูรณ์
-const response = await fetch(`https://press-renaissance-highlighted-biological.trycloudflare.com/api/courses`, { headers: { 'ngrok-skip-browser-warning': 'true' } });       
+    const response = await fetch('https://bell-lanka-voices-scheduled.trycloudflare.com/api/courses');
             const result = await response.json();
             reviewGrid.innerHTML = '';
 
@@ -1621,6 +1617,18 @@ const response = await fetch(`https://press-renaissance-highlighted-biological.t
     }
 
     async function openCourseDetail(code, name) {
+        window.deleteMyReview = async function(courseCode) {
+        if(!confirm('คุณต้องการลบรีวิวนี้ใช่หรือไม่?')) return;
+        const myId = localStorage.getItem('sut_student_id');
+        try {
+            await supabaseClient.from('course_reviews').delete().eq('course_code', courseCode).eq('student_id', myId);
+            openCourseDetail(currentReviewCode, currentReviewName); // โหลดหน้าต่างรีวิวใหม่
+            fetchAllRatings(); // อัปเดตดาวหน้าแรก
+            showSuccessModal('สำเร็จ!', 'ลบรีวิวของคุณเรียบร้อยแล้วครับ');
+        } catch (err) {
+            alert('เกิดข้อผิดพลาดในการลบรีวิว: ' + err.message);
+        }
+    };
         currentReviewCode = code; currentReviewName = name;
         mainPage.style.display = 'none'; detailPage.style.display = 'block';
         courseTitle.innerHTML = `รายวิชา<br><span style="color:#F05A28;">${window.formatCourseCodeDisplay(code)}</span> ${name}`;
@@ -1634,20 +1642,29 @@ const response = await fetch(`https://press-renaissance-highlighted-biological.t
             return;
         }
 
-        reviews.forEach(rev => {
+      reviews.forEach(rev => {
             const reviewerName = rev.student_id; 
             const dateObj = rev.created_at ? new Date(rev.created_at) : new Date();
             const dateStr = dateObj.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' });
             const initial = reviewerName.charAt(0).toUpperCase();
 
+            // เช็คว่าเป็นรีวิวของเราไหม ถ้าใช่ให้แสดงปุ่มลบ
+            const myStudentId = localStorage.getItem('sut_student_id');
+            const deleteBtnHtml = (reviewerName === myStudentId) 
+                ? `<button onclick="deleteMyReview('${code}')" style="background: none; border: none; color: #ef4444; font-size: 12px; cursor: pointer; margin-top: 8px;"><i class="fa-solid fa-trash"></i> ลบรีวิวนี้</button>` 
+                : '';
+
             commentsGrid.innerHTML += `
                 <div class="comment-card">
-                    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
-                        <div style="width: 45px; height: 45px; background: #10b981; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold;">${initial}</div>
-                        <div><div style="font-weight: 600; color: #111; font-size: 15px;">${reviewerName}</div><div style="color: #9ca3af; font-size: 12px;">on ${dateStr}</div></div>
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <div style="width: 45px; height: 45px; background: #10b981; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold;">${initial}</div>
+                            <div><div style="font-weight: 600; color: #111; font-size: 15px;">${reviewerName}</div><div style="color: #9ca3af; font-size: 12px;">on ${dateStr}</div></div>
+                        </div>
                     </div>
                     <div style="margin-bottom: 12px;">${generateStars(rev.rating)}</div>
                     <div style="font-size: 14px; color: #4b5563; line-height: 1.5;">${rev.review_text}</div>
+                    <div style="text-align: right;">${deleteBtnHtml}</div>
                 </div>
             `;
         });
@@ -2346,19 +2363,16 @@ window.viewFriendProfile = async function(friendId) {
         }
     }
 
+   // โหลดรูปโปรไฟล์ของเพื่อน (ใช้ API สร้างรูปโปรไฟล์จากรหัสนักศึกษาอัตโนมัติ)
     const avatarImg = document.getElementById('profile-avatar-img');
     const defaultIcon = document.getElementById('default-avatar-icon');
-    const friendAvatar = localStorage.getItem(`sut_avatar_${friendId}`);
     if (avatarImg && defaultIcon) {
-        if (friendAvatar) {
-            avatarImg.src = friendAvatar;
-            avatarImg.style.display = 'block';
-            defaultIcon.style.display = 'none';
-        } else {
-            avatarImg.style.display = 'none';
-            defaultIcon.style.display = 'block';
-        }
+        // ใช้ ui-avatars สร้างรูปให้เพื่อนแบบอัตโนมัติ
+        avatarImg.src = `https://ui-avatars.com/api/?name=${friendId}&background=random&color=fff&size=150&font-size=0.4`;
+        avatarImg.style.display = 'block';
+        defaultIcon.style.display = 'none';
     }
+        
 
     // 4. ล็อก Input ทั้งหมดไม่ให้แก้ไข และเปลี่ยนสีพื้นหลังให้ดูเป็น Read-only
     const inputs = ['profile-fullname', 'profile-faculty', 'profile-major', 'profile-age', 'profile-freetime', 'profile-mbti', 'profile-learning-style', 'profile-social'];
@@ -3527,5 +3541,146 @@ window.handleFriendRequest = async function(requesterId, newStatus) {
     } catch (err) {
         console.error("Friend request error: ", err);
         alert('เกิดข้อผิดพลาดในการจัดการคำขอ: ' + err.message);
+    }
+};
+
+window.inviteFriendToGroup = async function() {
+    if (!currentChatRoomId) return;
+
+    const myId = localStorage.getItem('sut_student_id');
+
+    Swal.fire({
+        title: 'กำลังโหลดรายชื่อเพื่อน...',
+        allowOutsideClick: false,
+        scrollbarPadding: false, // 🛑 คำสั่งนี้จะห้ามไม่ให้พื้นหลังขยับ
+        heightAuto: false,       // 🛑 ห้ามหน้าต่างยืดหดเอง
+        didOpen: () => { Swal.showLoading() }
+    });
+
+    try {
+        const { data: friendsData, error: fError } = await supabaseClient
+            .from('friendships')
+            .select('*')
+            .or(`requester_id.eq.${myId},receiver_id.eq.${myId}`)
+            .eq('status', 'accepted');
+
+        if (fError) throw fError;
+
+        let friendIds = [];
+        if (friendsData) {
+            friendIds = friendsData.map(f => f.requester_id === myId ? f.receiver_id : f.requester_id);
+        }
+
+        if (friendIds.length === 0) {
+            return Swal.fire({
+                icon: 'info',
+                title: 'ไม่มีเพื่อนในระบบ',
+                text: 'คุณต้องเพิ่มเพื่อนก่อน ถึงจะเชิญเข้ากลุ่มได้ครับ',
+                confirmButtonColor: '#F05A28',
+                scrollbarPadding: false, 
+                heightAuto: false        
+            });
+        }
+
+        const { data: profiles } = await supabaseClient
+            .from('profiles')
+            .select('student_id, first_name, last_name')
+            .in('student_id', friendIds);
+
+        let profileMap = {};
+        if (profiles) {
+            profiles.forEach(p => {
+                profileMap[p.student_id] = `${p.first_name || ''} ${p.last_name || ''}`.trim() || 'ไม่ระบุชื่อ';
+            });
+        }
+
+        let htmlContent = '<div style="max-height: 300px; overflow-y: auto; text-align: left; padding: 5px;">';
+        
+        friendIds.forEach(fId => {
+            const fName = profileMap[fId] || 'ไม่ระบุชื่อ';
+            htmlContent += `
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 10px; border-bottom: 1px solid #e5e7eb; transition: background 0.2s;" onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='transparent'">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="width: 40px; height: 40px; background: #dbeafe; color: #2563eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px;">
+                            ${fId.substring(0, 1)}
+                        </div>
+                        <div>
+                            <div style="font-weight: 600; font-size: 14px; color: #111;">${fId}</div>
+                            <div style="font-size: 12px; color: #6b7280;">${fName}</div>
+                        </div>
+                    </div>
+                    <button onclick="confirmInviteToGroup('${fId}')" style="background: #10b981; color: white; border: none; padding: 6px 14px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'Prompt'; transition: 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                        <i class="fa-solid fa-plus"></i> เชิญ
+                    </button>
+                </div>
+            `;
+        });
+        htmlContent += '</div>';
+
+        Swal.fire({
+            title: '<span style="font-size: 20px;">เลือกเพื่อนเพื่อเชิญเข้ากลุ่ม</span>',
+            html: htmlContent,
+            showConfirmButton: false,
+            showCloseButton: true,
+            width: '450px',
+            scrollbarPadding: false, // 🛑 ล็อคพื้นหลัง
+            heightAuto: false        // 🛑 ล็อคหน้าต่าง
+        });
+
+    } catch (err) {
+        Swal.fire({
+            icon: 'error',
+            title: 'เกิดข้อผิดพลาด',
+            text: 'ดึงรายชื่อเพื่อนไม่สำเร็จ: ' + err.message,
+            scrollbarPadding: false,
+            heightAuto: false
+        });
+    }
+};
+
+window.confirmInviteToGroup = async function(targetId) {
+    try {
+        const { data: existData } = await supabaseClient.from('chat_room_members')
+            .select('*').eq('room_id', currentChatRoomId).eq('student_id', targetId);
+            
+        if (existData && existData.length > 0) {
+            return Swal.fire({
+                icon: 'warning',
+                title: 'เชิญซ้ำไม่ได้',
+                text: 'เพื่อนคนนี้อยู่ในกลุ่มแล้ว หรือส่งคำขอไปแล้วครับ',
+                scrollbarPadding: false, 
+                heightAuto: false        
+            });
+        }
+
+        const { error } = await supabaseClient.from('chat_room_members').insert([{ 
+            room_id: currentChatRoomId, 
+            student_id: targetId, 
+            role: 'member', 
+            status: 'joined' 
+        }]);
+
+        if (error) throw error;
+        
+        Swal.fire({
+            icon: 'success',
+            title: 'สำเร็จ!',
+            text: `เชิญ ${targetId} เข้ากลุ่มเรียบร้อยแล้ว!`,
+            timer: 2000,
+            showConfirmButton: false,
+            scrollbarPadding: false, 
+            heightAuto: false        
+        });
+        
+        fetchGroupMembers(); 
+        
+    } catch (err) {
+        Swal.fire({
+            icon: 'error',
+            title: 'เกิดข้อผิดพลาด',
+            text: 'ไม่สามารถเชิญเพื่อนได้: ' + err.message,
+            scrollbarPadding: false,
+            heightAuto: false
+        });
     }
 };

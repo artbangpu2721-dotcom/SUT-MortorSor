@@ -50,11 +50,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (facultySelect && majorSelect) {
         try {
             // 🔥 แก้ไข: เติม /api/programs ให้สมบูรณ์
-  const response = await fetch('https://press-renaissance-highlighted-biological.trycloudflare.com/api/programs', {
-       headers: {
-           'ngrok-skip-browser-warning': 'true'
-       }
-   });
+            const response = await fetch('https://bell-lanka-voices-scheduled.trycloudflare.com/api/programs');
             const result = await response.json();
             
             if (result.status === 'success') {
@@ -162,10 +158,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (profileError) throw profileError;
 
-                alert('✅ สมัครสมาชิกสำเร็จ!');
-                
-                registerForm.reset();
-                switchAuthView('view-login');
+                Swal.fire({
+                    icon: 'success',
+                    title: 'สมัครสมาชิกสำเร็จ!',
+                    text: 'ระบบกำลังพากลับไปหน้าเข้าสู่ระบบ...',
+                    timer: 2000,
+                    showConfirmButton: false
+                }).then(() => {
+                    registerForm.reset();
+                    switchAuthView('view-login');
+                });
+
+
                 const loginStudentIdInput = document.getElementById('login-studentid');
                 if(loginStudentIdInput) loginStudentIdInput.value = studentId;
 
